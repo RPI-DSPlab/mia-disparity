@@ -1,8 +1,8 @@
 # Membership Inference Attacks as Privacy Tools: Reliability, Disparity and Ensemble
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15491989.svg)](https://doi.org/10.5281/zenodo.15491989)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15491989.svg)](https://doi.org/10.5281/zenodo.15491989) [![arXiv](https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg)](https://arxiv.org/abs/2506.13972)
 
- This is a repository for the paper "Membership Inference Attacks as Privacy Tools: Reliability, Disparity and Ensemble", accepted by ACM CCS 2025. This is a cleaned-up version of our MIAE framework repository to contain only essential scripts for reproducing results in this paper. Main scripts are in the [experiment/mia_comp](experiment/mia_comp) directory. Our paper is available at [paper.pdf](./paper.pdf).
+ This is a repository for the paper "Membership Inference Attacks as Privacy Tools: Reliability, Disparity and Ensemble", accepted by ACM CCS 2025. This is a cleaned-up version of our [MIAE framework repository](https://github.com/RPI-DSPlab/MIAE) to contain only essential scripts for reproducing results in this paper. Main scripts are in the [experiment/mia_comp](experiment/mia_comp) directory. Our paper is available at [paper.pdf](./paper.pdf).
 
  Note that throughout this repo, we refer coverage and stability (2 definition defined in the paper) as union and intersection respectively. We also refer instances and seeds, since each instance is `prepared` with a different seed.
 
@@ -15,18 +15,17 @@
   - [Abstract](#abstract)
   - [Set up the environment](#set-up-the-environment)
   - [Quick fix for relative imports](#quick-fix-for-relative-imports)
-  - [Preparing Predictions of Multi-instances MIAs](#preparing-predictions-of-multi-instances-mias)
-    - [`obtain_pred.py`](#obtain_predpy)
-  - [Comparing MIAs](#comparing-mias)
-    - [`obtain_graph.py`](#obtain_graphpy)
-    - [`obtain_jaccard.py`](#obtain_jaccardpy)
-    - [`process_CINIC10.ipynb`](#process_cinic10ipynb)
+    - [Obtaining Membership Predictions - `obtain_pred.py`](#obtaining-membership-predictions---obtain_predpy)
+  - [Instance Level Comparisons](#instance-level-comparisons)
+    - [Disparity Graphs - `obtain_graph.py`](#disparity-graphs---obtain_graphpy)
+    - [Jaccard Similarity Between Attacks - `obtain_jaccard.py`](#jaccard-similarity-between-attacks---obtain_jaccardpy)
+    - [Importing and partitioning the CINIC10 dataset - `process_CINIC10.ipynb`](#importing-and-partitioning-the-cinic10-dataset---process_cinic10ipynb)
+    - [Top-k Class-NN Distribution Shift - `same_attack_different_signal/same_attack_different_signal.ipynb`](#top-k-class-nn-distribution-shift---same_attack_different_signalsame_attack_different_signalipynb)
+    - [Disparity Empirical Analysis - `disparity_empirical_analysis.ipynb`](#disparity-empirical-analysis---disparity_empirical_analysisipynb)
   - [`/ensemble` Directory](#ensemble-directory)
-    - [`max_ensemble_low_fpr.ipynb`](#max_ensemble_low_fpripynb)
-    - [`ensemble_roc.py`](#ensemble_rocpy)
-    - [`ensemble_performance.ipynb`](#ensemble_performanceipynb)
-    - [`same_attack_different_signal/same_attack_different_signal.ipynb`](#same_attack_different_signalsame_attack_different_signalipynb)
-    - [`disparity_empirical_analysis.ipynb`](#disparity_empirical_analysisipynb)
+    - [Obtain Ensemble predictions - `max_ensemble_low_fpr.ipynb`](#obtain-ensemble-predictions---max_ensemble_low_fpripynb)
+    - [ROC Curves of Ensemble Attacks - `ensemble_roc.py`](#roc-curves-of-ensemble-attacks---ensemble_rocpy)
+    - [Plot Performance Chart - `ensemble_performance.ipynb`](#plot-performance-chart---ensemble_performanceipynb)
  
  ## Abstract
  
@@ -50,16 +49,11 @@
  
  go to the root directory of the repo and run:
  ```bash
- pip install -e miae
+ pip install -e .
  ```
  
  -------------------
- ## Preparing Predictions of Multi-instances MIAs
-
- 
- 
- 
- ### `obtain_pred.py`
+ ###  Obtaining Membership Predictions - `obtain_pred.py`
  
  1. Initialize the specified target model and the target dataset.
  2. Split the target dataset into target dataset and auxiliary dataset.
@@ -90,11 +84,13 @@
     bash run_multi_seed.sh {0..5}
     ```
     0..5 is the range of the seeds you want to run.
+
+We also provide the intermediate results of the target model, target datasets, and the predictions from multiple difference instances in the `experiment/mia_comp/target_model` directory. You can use them to skip the preparation step and directly run the attack predictions. The intermediate results are available at Huggingface [here](https://huggingface.co/datasets/ZhiqiEliWang/mia-disparity).
  
  -------------------
-  ## Comparing MIAs
+  ## Instance Level Comparisons
  
- ### `obtain_graph.py`
+ ### Disparity Graphs - `obtain_graph.py`
  The `obtain_graph.py` script is designed to load data, generate various plots, and evaluate metrics. 
  The code is divided into three primary categories: Data Loading, Plot Diagram, and Evaluation.
  
@@ -117,38 +113,41 @@
        ```bash
       bash experiment_scripts/obtain_multi_seed_conv.sh
         ```
- 
-   
- ### `obtain_jaccard.py`
-    The `obtain_jaccard.py` is designed to save the Jaccard similarity between different MIAs and plot a heatmap to visualize the Jaccard similarity matrix. Before running this shell script, make sure you have already have the 
-    pair-wise jaccard similarity, which can be calculated via running obtain_venn.sh 
-    ```bash
-    bash experiment_scripts/obtain_jaccard.sh
-    ```
+
+
+ ### Jaccard Similarity Between Attacks - `obtain_jaccard.py`
+   The `obtain_jaccard.py` is designed to save the Jaccard similarity between different MIAs and plot a heatmap to visualize the Jaccard similarity matrix. Before running this shell script, make sure you have already have the
+   pair-wise jaccard similarity, which can be calculated via running obtain_venn.sh.
+   ```bash
+   bash experiment_scripts/obtain_jaccard.sh
+   ```
     
- ### `process_CINIC10.ipynb`
-    The `process_CINIC10.ipynb` is designed to process the CINIC10 dataset 30,000 ImageNet samples and 30,000 CIFAR10 samples. Run it to make sure cinic10 is available in the `DATA_DIR`. 
+ ### Importing and partitioning the CINIC10 dataset - `process_CINIC10.ipynb`
+   The `process_CINIC10.ipynb` is designed to process the CINIC10 dataset 30,000 ImageNet samples and 30,000 CIFAR10 samples. Run it to make sure cinic10 is available in the `DATA_DIR`. 
+
+ ### Top-k Class-NN Distribution Shift - `same_attack_different_signal/same_attack_different_signal.ipynb`
+
+ To make sure this work, you need to run the `obtain_pred.py` script to prepare `top_k_shokri`. Make sure you replace the k with the number of top-k logits you are using for the prediction files.
+
+ This notebook is designed to compare the performance of the same attack on different signals. Corresponding to the paper's *Attack Signals of A-covered Samples*. This directory also contains top-x shokri, which inherits from the original Shokri's attack in our package but limits the logits to the top-x logits. To plot Figure 13 in the paper, you can run `obtain_graph.py` with top-k shokri are 
+ 
+ ### Disparity Empirical Analysis - `disparity_empirical_analysis.ipynb`
+ 
+ This notebook is designed to analyze the disparity of MIAs in the empirical study. Corresponding to the paper's Section 4.4.
  
  ## `/ensemble` Directory
  
  This directory contains the code for the ensemble strategies proposed in the paper: Coverage Ensemble and Stability ensemble. 
  
- ### `max_ensemble_low_fpr.ipynb`
-    This notebook is designed to performs Coverage Ensemble and Stability Ensemble. It starts with thresholding the predictions of the base instances at the same low FPR, then ensemble the predictions follows our paper's definition of 2 step ensemble approach.
+ ### Obtain Ensemble predictions - `max_ensemble_low_fpr.ipynb`
+   This notebook is designed to performs Coverage Ensemble and Stability Ensemble. It starts with thresholding the predictions of the base instances at the same low FPR, then ensemble the predictions follows our paper's definition of 2 step ensemble approach.
  
- ### `ensemble_roc.py` 
-    Ensemble roc samples n thresholds for n FPRs for each base instance. Then each attack goes through the steps of ensemble in `max_ensemble_low_fpr.ipynb` for n times with different thresholds to get n samples for each ensemble TPR@FPR. It also calculates the AUC, ACC and TPR@Low FPR for each ensemble.
+ ### ROC Curves of Ensemble Attacks - `ensemble_roc.py` 
+   Ensemble roc samples n thresholds for n FPRs for each base instance. Then each attack goes through the steps of ensemble in `max_ensemble_low_fpr.ipynb` for n times with different thresholds to get n samples for each ensemble TPR@FPR. It also calculates the AUC, ACC and TPR@Low FPR for each ensemble. To run it for multiple configurations, you can run the `ensemble/obain_roc.sh` script.
  
- ### `ensemble_performance.ipynb` 
+ ### Plot Performance Chart - `ensemble_performance.ipynb` 
  
- This notebook is designed to compare the performance of the ensemble strategies proposed in the paper. It organizes the performance result (TPR@low FPR, auc, acc) with respect to the number of instances used in the ensemble. 
+ This notebook is designed to compare the performance of the ensemble strategies proposed in the paper. It organizes the performance result (TPR@low FPR, auc, acc) with respect to the number of instances used in the ensemble. As seen in paper's Table 1.
  
  ___
  
- ### `same_attack_different_signal/same_attack_different_signal.ipynb`
- 
- This notebook is designed to compare the performance of the same attack on different signals. Corresponding to the paper's *Attack Signals of A-covered Samples*.
- 
- ### `disparity_empirical_analysis.ipynb`
- 
- This notebook is designed to analyze the disparity of MIAs in the empirical study. Corresponding to the paper's *Output Distribution of A-Unique Samples*.

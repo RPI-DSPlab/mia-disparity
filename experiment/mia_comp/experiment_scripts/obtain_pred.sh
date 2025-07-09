@@ -92,6 +92,7 @@ fi
             --target_epochs "$num_epoch" \
             --data_path "$data_dir" \
             --device "cuda:0" \
+            --dataset_file_root="$data_dir" \
             --lira_shadow_path "$lira_shadow_dir"
 
             rm -r "$prepare_path"

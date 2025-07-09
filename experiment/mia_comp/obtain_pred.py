@@ -328,7 +328,7 @@ if __name__ == '__main__':
     # mandatory arguments
     parser.add_argument('--attack', type=str, default=None, help='MIA type: [losstraj, yeom, shokri ,lira, aug, calibration, top_k_shokri, reference, lira_offline]')
     parser.add_argument('--target_model', type=str, default=None,
-                        help='target model arch: [resnet56, wrn32_4, vgg16, mobilenet, mlp]')
+                        help='target model arch: [resnet56, wrn32_4, vgg16, mobilenet, mlp_for_texas_purchase]')
     parser.add_argument('--dataset', type=str, default=None, help='dataset: [cifar10, cifar100, cinic10, purchase100, texas100]')
     parser.add_argument('--result_path', type=str, default=None, help='path to save the prediction')
     parser.add_argument('--data_path', type=str, default=None, help='path to the dataset')
@@ -363,6 +363,14 @@ if __name__ == '__main__':
 
     # set seed
     set_seed(args.seed)
+
+    # check model-dataset compatibility
+    if args.dataset == "purchase100" or args.dataset == "texas100":
+        if args.target_model != "mlp_for_texas_purchase":
+            raise ValueError("Invalid target model for purchase100 or texas100 dataset, only mlp_for_texas_purchase is supported")
+    elif args.dataset == "cifar10" or args.dataset == "cifar100" or args.dataset == "cinic10":
+        if args.target_model not in ["resnet56", "wrn32_4", "vgg16", "mobilenet"]:
+            raise ValueError("Invalid target model for cifar10, cifar100 or cinic10 dataset, only resnet56, wrn32_4, vgg16 and mobilenet are supported")
 
     # create all the necessary directories
     for path in [args.result_path, args.target_model_path, args.preparation_path, args.data_path]:
@@ -415,6 +423,7 @@ if __name__ == '__main__':
             np.save(os.path.join(dataset_save_path, "canary_indices.npy"), canary_indices)
 
         exit(0)
+
 
     dataset_save_path = os.path.join(args.data_path, f"{args.dataset}")
     if args.canaries > 0: # canary dataset saved in a separate folder
