@@ -1,10 +1,10 @@
 # Membership Inference Attacks as Privacy Tools: Reliability, Disparity and Ensemble
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15491989.svg)](https://doi.org/10.5281/zenodo.15491989) [![arXiv](https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg)](https://arxiv.org/abs/2506.13972)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15491989.svg)](https://doi.org/10.5281/zenodo.15491989) [![arXiv](https://img.shields.io/badge/arXiv-2506.13972-b31b1b.svg)](https://arxiv.org/abs/2506.13972)
 
  This is a repository for the paper "Membership Inference Attacks as Privacy Tools: Reliability, Disparity and Ensemble", accepted by ACM CCS 2025. This is a cleaned-up version of our [MIAE framework repository](https://github.com/RPI-DSPlab/MIAE) to contain only essential scripts for reproducing results in this paper. Main scripts are in the [experiment/mia_comp](experiment/mia_comp) directory. Our paper is available at [paper.pdf](./paper.pdf).
 
- Note that throughout this repo, we refer coverage and stability (2 definition defined in the paper) as union and intersection respectively. We also refer instances and seeds, since each instance is `prepared` with a different seed.
+ Note that throughout this repo, we refer coverage and stability (2 definition defined in the paper) as union and intersection, respectively. We also refer instances and seeds, since each instance is `prepared` with a different seed.
 
 
 
@@ -36,7 +36,7 @@
 
  ⚠️ **NOTE**: To be able to set up the directory correctly, please replace the `DATA_DIR` in all the scripts with the path to the directory where you want to store the attack predictions and results. We also recommend to run all scripts (especially those bash script) in the `miae/experiment/mia_comp` directory.
 
- ⚠️ **NOTE**: Most bash scripts has different config set by commenting/uncommenting the lines. For example, in `experiment_scripts/obtain_venn.sh`, you can set the config of the venn diagram by commenting and uncommenting the lines. The same applies to other bash scripts.
+ ⚠️ **NOTE**: Most bash scripts have a different config set by commenting/uncommenting the lines. For example, in `experiment_scripts/obtain_venn.sh`, you can set the config of the venn diagram by commenting and uncommenting the lines. The same applies to other bash scripts.
 
 
  ## Set up the environment
@@ -56,7 +56,7 @@
  ###  Obtaining Membership Predictions - `obtain_pred.py`
  
  1. Initialize the specified target model and the target dataset.
- 2. Split the target dataset into target dataset and auxiliary dataset.
+ 2. Split the target dataset into the target dataset and the auxiliary dataset.
  3. Train the target model on the target dataset.
  4. Prepare the specified MIAs with the (black box access) target model and the auxiliary dataset.
  5. Save the prediction on the target dataset.
@@ -85,7 +85,7 @@
     ```
     0..5 is the range of the seeds you want to run.
 
-We also provide the intermediate results of the target model, target datasets, and the predictions from multiple difference instances in the `experiment/mia_comp/target_model` directory. You can use them to skip the preparation step and directly run the attack predictions. The intermediate results are available at Huggingface [here](https://huggingface.co/datasets/ZhiqiEliWang/mia-disparity).
+We also provide the intermediate results of the target model, target datasets, and the predictions from multiple different instances in the `experiment/mia_comp/target_model` directory. You can use them to skip the preparation step and directly run the attack predictions. The intermediate results are available at Huggingface [here](https://huggingface.co/datasets/ZhiqiEliWang/mia-disparity).
  
  -------------------
   ## Instance Level Comparisons
@@ -101,11 +101,11 @@ We also provide the intermediate results of the target model, target datasets, a
  
  - Plot Diagram
     
-    - **`plot_venn`**: Plots a Venn diagram for comparisons between attackss.
+    - **`plot_venn`**: Plots a Venn diagram for comparisons between attacks.
        ```bash
        bash experiment_scripts/obtain_venn.sh 
         ``` 
-    - **`plot_auc`**: Plots a AUC diagram (Area Under the Curve)  for different models or attacks.
+    - **`plot_auc`**: Plots an AUC diagram (Area Under the Curve)  for different models or attacks.
        ```bash
       bash experiment_scripts/obtain_auc.sh
         ```
@@ -140,14 +140,14 @@ We also provide the intermediate results of the target model, target datasets, a
  This directory contains the code for the ensemble strategies proposed in the paper: Coverage Ensemble and Stability ensemble. 
  
  ### Obtain Ensemble predictions - `max_ensemble_low_fpr.ipynb`
-   This notebook is designed to performs Coverage Ensemble and Stability Ensemble. It starts with thresholding the predictions of the base instances at the same low FPR, then ensemble the predictions follows our paper's definition of 2 step ensemble approach.
+   This notebook is designed to perform Coverage Ensemble and Stability Ensemble. It starts with thresholding the predictions of the base instances at the same low FPR, then ensemble the predictions follows our paper's definition of 2 step ensemble approach.
  
  ### ROC Curves of Ensemble Attacks - `ensemble_roc.py` 
-   Ensemble roc samples n thresholds for n FPRs for each base instance. Then each attack goes through the steps of ensemble in `max_ensemble_low_fpr.ipynb` for n times with different thresholds to get n samples for each ensemble TPR@FPR. It also calculates the AUC, ACC and TPR@Low FPR for each ensemble. To run it for multiple configurations, you can run the `ensemble/obain_roc.sh` script.
+   Ensemble roc samples n thresholds for n FPRs for each base instance. Then each attack goes through the steps of ensemble in `max_ensemble_low_fpr.ipynb` for n times with different thresholds to get n samples for each ensemble TPR@FPR. It also calculates the AUC, ACC, and TPR@Low FPR for each ensemble. To run it for multiple configurations, you can run the `ensemble/obain_roc.sh` script.
  
  ### Plot Performance Chart - `ensemble_performance.ipynb` 
  
- This notebook is designed to compare the performance of the ensemble strategies proposed in the paper. It organizes the performance result (TPR@low FPR, auc, acc) with respect to the number of instances used in the ensemble. As seen in paper's Table 1.
+ This notebook is designed to compare the performance of the ensemble strategies proposed in the paper. It organizes the performance result (TPR@low FPR, auc, acc) with respect to the number of instances used in the ensemble. As seen in the paper's Table 1.
  
  ___
  
